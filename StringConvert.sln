@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StringConvert.WebClient", "StringConvert.WebClient\StringConvert.WebClient.csproj", "{C9152EEE-934F-4EE9-96C7-53A77D8D3477}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9152EEE-934F-4EE9-96C7-53A77D8D3477}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9152EEE-934F-4EE9-96C7-53A77D8D3477}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9152EEE-934F-4EE9-96C7-53A77D8D3477}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9152EEE-934F-4EE9-96C7-53A77D8D3477}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

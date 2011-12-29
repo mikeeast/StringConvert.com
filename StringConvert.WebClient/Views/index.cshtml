@@ -1,0 +1,92 @@
+﻿@{
+    Layout = "_layout.cshtml";
+}
+
+
+<script src="@Url.Content("~/Scripts/jquery.signalR.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/signalr/hubs")" type="text/javascript"></script>
+<script language="javascript" type="text/javascript">
+    var converterHub = $.connection.converterHub;
+
+    converterHub.addLatestConversion = function(latestConversion) {
+        $('<li>' + latestConversion + '</li>').prependTo($('#latestContainer'));
+    };
+
+    var converter = function(name) {
+        this.name = name;
+        this.result = ko.observable(' ');
+        this.processing = ko.dependentObservable(function() {
+            return !this.result();
+        }.bind(this));
+        this.execute = function(input) {
+            this.result('');
+            converterHub.executeAsync(this.name, input)
+                .done(function(result) {
+                    this.result(result || ' ');
+                }.bind(this));
+        }.bind(this);
+    };
+
+    var viewModel = function () {
+        this.input = ko.observable();
+        this.timeout = { };
+        this.input.subscribe(function(input) {
+            clearTimeout(this.timeout);
+            this.timeout = setTimeout(function() {
+                converterHub.reportConversion(input);
+                ko.utils.arrayForEach(this.converters(), function(c) {
+                    c.execute(input);
+                });
+            }.bind(this), 500);
+        }.bind(this));
+        // Normally this would be needed, but with the mapping plugin 
+        // it's magically added and we can bind to it like any observable.
+        // this.converters = ko.observableArray([]);
+    };
+
+    var mapping = {
+        'converters' : {
+            create : function (options) {
+                return new converter(options.data.Name);
+            }
+        }
+    };
+
+    $(document).ready(function () {
+        var vm = new viewModel();
+        ko.mapping.fromJS(@Html.Raw(Model), mapping, vm);
+        ko.applyBindings(vm);
+        $.connection.hub.start(function() {
+            converterHub.getPreviousConversions(function (previousConversions) {
+                ko.utils.arrayForEach(ko.utils.parseJson(previousConversions), function(c) {
+                    converterHub.addLatestConversion(c);
+                });
+            });
+        });
+    });
+</script>
+
+<div class="row span">
+    <form action="" class="form-stacked">
+        <fieldset class="clearfix">
+            <div class="span14">
+                <label for="prependedInput">Convert something</label>
+                <div class="input">
+                    <div class="input-prepend">
+                        <span class="add-on">Convert</span>
+                        <input class="xlarge"  data-bind="value: input, valueUpdate: 'keyup'" id="prependedInput" name="prependedInput" size="16" type="text">
+                    </div>
+                    <span class="help-block">Enter any string</span>
+                </div>
+            </div>            
+        </fieldset>
+    </form>           
+</div>
+<div class="row span" data-bind="foreach: converters">
+    <div class="span5 well box">
+        <img class="pull-right" data-bind="visible: processing" src="@Url.Content("~/Content/images/ajax-loader.gif")"/>
+        <h3 data-bind="text: name"></h3>
+        
+        <textarea class="xlarge" rows="4" data-bind="text: result()"></textarea>
+    </div>
+</div>
