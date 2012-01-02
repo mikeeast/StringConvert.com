@@ -9,3 +9,6 @@ _ReSharper.*
 *.Cache
 *.cache
 ~$*
+*.Publish.xml
+*.Debug.config
+*.Release.config
